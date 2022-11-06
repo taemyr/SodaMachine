@@ -92,7 +92,7 @@ namespace ConsoleApplication1
                 }
                 if (input.StartsWith("sms order"))
                 {
-                    var arg = input.Split(' ')[1];
+                    var arg = input.Split(' ')[2];
                     SmsOrder(arg);
                 }
 
