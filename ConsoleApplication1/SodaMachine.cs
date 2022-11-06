@@ -9,9 +9,7 @@ namespace ConsoleApplication1
     {
         private static int money;
 
-        InventoryCollection inv = new InventoryCollection(new Inventory[] { new Inventory(ReferenceData.Cola,5),new Inventory(ReferenceData.Fanta,3),new Inventory(ReferenceData.Sprite,3) });
-
-        Soda[] inventory = new[] { new Soda { Name = "coke", Nr = 5 }, new Soda { Name = "sprite", Nr = 3 }, new Soda { Name = "fanta", Nr = 3 } };
+        InventoryCollection inventories = new InventoryCollection(new Inventory[] { new Inventory(ReferenceData.Cola,5),new Inventory(ReferenceData.Fanta,3),new Inventory(ReferenceData.Sprite,3) });
 
         public void Insert(int amount)
         {
@@ -19,102 +17,40 @@ namespace ConsoleApplication1
             Console.WriteLine("Adding " + amount + " to credit");
         }
 
-        public void Order(string sodaName)
+        private void order(string sodaName, bool debit)
         {
-            //Find out witch kind
-            switch (sodaName)
+            var inventory = inventories[sodaName];
+            if (inventory == null)
             {
-                case "coke":
-                    var coke = inventory[0];
-                    if (coke.Name == sodaName && money > 19 && coke.Nr > 0)
-                    {
-                        Console.WriteLine("Giving coke out");
-                        money -= 20;
-                        Console.WriteLine("Giving " + money + " out in change");
-                        money = 0;
-                        coke.Nr--;
-                    }
-                    else if (coke.Name == sodaName && coke.Nr == 0)
-                    {
-                        Console.WriteLine("No coke left");
-                    }
-                    else if (coke.Name == sodaName)
-                    {
-                        Console.WriteLine("Need " + (20 - money) + " more");
-                    }
-
-                    break;
-                case "fanta":
-                    var fanta = inventory[2];
-                    if (fanta.Name == sodaName && money > 14 && fanta.Nr >= 0)
-                    {
-                        Console.WriteLine("Giving fanta out");
-                        money -= 15;
-                        Console.WriteLine("Giving " + money + " out in change");
-                        money = 0;
-                        fanta.Nr--;
-                    }
-                    else if (fanta.Name == sodaName && fanta.Nr == 0)
-                    {
-                        Console.WriteLine("No fanta left");
-                    }
-                    else if (fanta.Name == sodaName)
-                    {
-                        Console.WriteLine("Need " + (15 - money) + " more");
-                    }
-
-                    break;
-                case "sprite":
-                    var sprite = inventory[1];
-                    if (sprite.Name == sodaName && money > 14 && sprite.Nr > 0)
-                    {
-                        Console.WriteLine("Giving sprite out");
-                        money -= 15;
-                        Console.WriteLine("Giving " + money + " out in change");
-                        money = 0;
-                        sprite.Nr--;
-                    }
-                    else if (sprite.Name == sodaName && sprite.Nr == 0)
-                    {
-                        Console.WriteLine("No sprite left");
-                    }
-                    else if (sprite.Name == sodaName)
-                    {
-                        Console.WriteLine("Need " + (15 - money) + " more");
-                    }
-                    break;
-                default:
-                    Console.WriteLine("No such soda");
-                    break;
+                Console.WriteLine("No such soda");
+                return;
+            }
+            if (inventory.Amount < 1)
+            {
+                Console.WriteLine($"No {sodaName} left");
+                return;
+            }
+            if (debit && inventory.Soda.Price>money)
+            {
+                Console.WriteLine($"Need {(inventory.Soda.Price - money)} more");
+                return;
+            }
+            inventory.Amount--;
+            if(debit)
+            {
+                money -= inventory.Soda.Price;
+                Recall();
             }
         }
 
-        public void SmsOrder(string cName)
+        public void Order(string sodaName)
         {
-            switch (cName)
-            {
-                case "coke":
-                    if (inventory[0].Nr > 0)
-                    {
-                        Console.WriteLine("Giving coke out");
-                        inventory[0].Nr--;
-                    }
-                    break;
-                case "sprite":
-                    if (inventory[1].Nr > 0)
-                    {
-                        Console.WriteLine("Giving sprite out");
-                        inventory[1].Nr--;
-                    }
-                    break;
-                case "fanta":
-                    if (inventory[2].Nr > 0)
-                    {
-                        Console.WriteLine("Giving fanta out");
-                        inventory[2].Nr--;
-                    }
-                    break;
-            }
+            order(sodaName, true);
+        }
+
+        public void SmsOrder(string sodaName)
+        {
+            order(sodaName, false);
         }
 
 
