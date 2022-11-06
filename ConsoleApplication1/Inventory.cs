@@ -7,10 +7,10 @@ namespace ConsoleApplication1
 {
     class Inventory
     {
-        public Inventory(Soda soda, int count)
+        public Inventory(Soda soda, int amount)
         {
-            this.Soda = Soda ?? throw new ArgumentNullException(nameof(soda));
-            this.Amount = Amount;
+            this.Soda = soda ?? throw new ArgumentNullException(nameof(soda));
+            this.Amount = amount;
         }
 
         public Soda Soda { get; private set; }
