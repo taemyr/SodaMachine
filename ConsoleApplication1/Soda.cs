@@ -9,6 +9,6 @@ namespace ConsoleApplication1
     {
         public string Name { get; set; }
         public int Nr { get; set; }
-
+        public int Price { get; set; }
     }
 }
