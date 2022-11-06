@@ -9,6 +9,8 @@ namespace ConsoleApplication1
     {
         private static int money;
 
+        InventoryCollection inv = new InventoryCollection(new Inventory[] { new Inventory(ReferenceData.Cola,5),new Inventory(ReferenceData.Fanta,3),new Inventory(ReferenceData.Sprite,3) });
+
         Soda[] inventory = new[] { new Soda { Name = "coke", Nr = 5 }, new Soda { Name = "sprite", Nr = 3 }, new Soda { Name = "fanta", Nr = 3 } };
 
         public void Insert(int amount)
