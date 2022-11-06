@@ -35,6 +35,7 @@ namespace ConsoleApplication1
                 Console.WriteLine($"Need {(inventory.Soda.Price - money)} more");
                 return;
             }
+            Console.WriteLine($"Giving {sodaName} out");
             inventory.Amount--;
             if(debit)
             {
