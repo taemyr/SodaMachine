@@ -10,7 +10,7 @@ namespace ConsoleApplication1.Actions
     /// </summary>
     public class NoOp : ActionBase
     {
-        public NoOp() : base(null)
+        public NoOp(string msg) : base(msg)
         {
         }
 

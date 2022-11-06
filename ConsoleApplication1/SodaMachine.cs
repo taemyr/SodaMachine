@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleApplication1.Actions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,53 +12,56 @@ namespace ConsoleApplication1
 
         InventoryCollection inventories = new InventoryCollection(new Inventory[] { new Inventory(ReferenceData.Cola,5),new Inventory(ReferenceData.Fanta,3),new Inventory(ReferenceData.Sprite,3) });
 
-        public void Insert(int amount)
+        public IEnumerable<ISodaMachineAction> Insert(int amount)
         {
             money += amount;
-            Console.WriteLine("Adding " + amount + " to credit");
+            yield return new NoOp("Adding " + amount + " to credit");
         }
 
-        private void order(string sodaName, bool debit)
+        private IEnumerable<ISodaMachineAction> order(string sodaName, bool debit)
         {
             var inventory = inventories[sodaName];
             if (inventory == null)
             {
-                Console.WriteLine("No such soda");
-                return;
+                yield return new DisplayWarning("No such soda");
+                yield break;
             }
             if (inventory.Amount < 1)
             {
-                Console.WriteLine($"No {sodaName} left");
-                return;
+                yield return new DisplayWarning($"No {sodaName} left");
+                yield break;
             }
             if (debit && inventory.Soda.Price>money)
             {
-                Console.WriteLine($"Need {(inventory.Soda.Price - money)} more");
-                return;
+                yield return new DisplayWarning($"Need {(inventory.Soda.Price - money)} more");
+                yield break;
             }
-            Console.WriteLine($"Giving {sodaName} out");
+            yield return new EmitSoda(sodaName);
             inventory.Amount--;
             if(debit)
             {
                 money -= inventory.Soda.Price;
-                Recall();
+                foreach (var action in Recall())
+                {
+                    yield return action;
+                }
             }
         }
 
-        public void Order(string sodaName)
+        public IEnumerable<ISodaMachineAction> Order(string sodaName)
         {
-            order(sodaName, true);
+            return order(sodaName, true);
         }
 
-        public void SmsOrder(string sodaName)
+        public IEnumerable<ISodaMachineAction> SmsOrder(string sodaName)
         {
-            order(sodaName, false);
+            return order(sodaName, false);
         }
 
 
-        private void Recall()
+        public IEnumerable<ISodaMachineAction> Recall()
         {
-            Console.WriteLine("Returning " + money + " to customer");
+            yield return new ReturnMoney(money);
             money = 0;
         }
 
@@ -78,30 +82,38 @@ namespace ConsoleApplication1
                 Console.WriteLine("-------\n\n");
 
                 var input = Console.ReadLine();
-
+                IEnumerable<ISodaMachineAction> result;
                 if (input.StartsWith("insert"))
                 {
                     //Add to credit
                     var arg = int.Parse(input.Split(' ')[1]);
-                    Insert(arg);
+                    result=Insert(arg);
                 }
-                if (input.StartsWith("order"))
+                else if (input.StartsWith("order"))
                 {
                     // split string on space
                     var arg = input.Split(' ')[1];
-                    Order(arg);
+                    result = Order(arg);
                 }
-                if (input.StartsWith("sms order"))
+                else if (input.StartsWith("sms order"))
                 {
                     var arg = input.Split(' ')[2];
-                    SmsOrder(arg);
+                    result = SmsOrder(arg);
                 }
 
-                if (input.Equals("recall"))
+                else if (input.Equals("recall"))
                 {
-                    Recall();
+                    result = Recall();
+                }
+                else
+                {
+                    result = new ISodaMachineAction[] { new DisplayWarning("Unknown command") };
                 }
 
+                foreach(var action in result)
+                {
+                    Console.WriteLine(action.Msg);
+                }
             }
         }
 
