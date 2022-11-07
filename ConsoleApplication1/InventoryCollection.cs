@@ -21,9 +21,8 @@ namespace ConsoleApplication1
             }
         }
 
-        public InventoryCollection(IEnumerable<Inventory> inventories)
+        public InventoryCollection(params Inventory[] inventories)
         {
-            inventories = inventories ?? throw new ArgumentNullException(nameof(inventories));
             this.inventories = inventories.ToList();
         }
 
