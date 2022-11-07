@@ -2,3 +2,6 @@
 .vs/
 ConsoleApplication1/obj/
 ConsoleApplication1/bin/
+packages/
+SodaMachineUnitTests/bin/
+SodaMachineUnitTests/obj/
