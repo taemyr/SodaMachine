@@ -127,5 +127,22 @@ namespace SodaMachineUnitTests
             cola1.Amount.Should().Be(10);
         }
 
+        [TestMethod]
+        public void OnRecall_ReturnMoneyAndUpdateBalance()
+        {
+            //Arrange
+            int intialInsert = 40;
+            sut.Insert(intialInsert);
+            int insert2 = 2;
+            sut.Insert(insert2);
+            //Act
+            var result = sut.Recall().ToArray();
+            //Assert
+            sut.Balance.Should().Be(0);
+            result.Should().HaveCount(1);
+            result[0].Should().BeOfType<ReturnMoney>();
+            result[0].Msg.Should().Be($"Returning {intialInsert+insert2} to customer");
+        }
+
     }
 }
