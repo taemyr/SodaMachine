@@ -8,13 +8,13 @@ namespace ConsoleApplication1
 {
     public class SodaMachine
     {
-        private static int money;
+        public int Balance { get; private set; }
 
         InventoryCollection inventories = new InventoryCollection(new Inventory[] { new Inventory(ReferenceData.Cola,5),new Inventory(ReferenceData.Fanta,3),new Inventory(ReferenceData.Sprite,3) });
 
         public IEnumerable<ISodaMachineAction> Insert(int amount)
         {
-            money += amount;
+            Balance += amount;
             yield return new NoOp("Adding " + amount + " to credit");
         }
 
@@ -31,16 +31,16 @@ namespace ConsoleApplication1
                 yield return new DisplayWarning($"No {sodaName} left");
                 yield break;
             }
-            if (debit && inventory.Soda.Price>money)
+            if (debit && inventory.Soda.Price> Balance)
             {
-                yield return new DisplayWarning($"Need {(inventory.Soda.Price - money)} more");
+                yield return new DisplayWarning($"Need {(inventory.Soda.Price - Balance)} more");
                 yield break;
             }
             yield return new EmitSoda(sodaName);
             inventory.Amount--;
             if(debit)
             {
-                money -= inventory.Soda.Price;
+                Balance -= inventory.Soda.Price;
                 foreach (var action in Recall())
                 {
                     yield return action;
@@ -61,8 +61,8 @@ namespace ConsoleApplication1
 
         public IEnumerable<ISodaMachineAction> Recall()
         {
-            yield return new ReturnMoney(money);
-            money = 0;
+            yield return new ReturnMoney(Balance);
+            Balance = 0;
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace ConsoleApplication1
                 Console.WriteLine("sms order (coke, sprite, fanta) - Order sent by sms");
                 Console.WriteLine("recall - gives money back");
                 Console.WriteLine("-------");
-                Console.WriteLine("Inserted money: " + money);
+                Console.WriteLine("Inserted money: " + Balance);
                 Console.WriteLine("-------\n\n");
 
                 var input = Console.ReadLine();
