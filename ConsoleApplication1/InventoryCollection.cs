@@ -5,6 +5,10 @@ using System.Text;
 
 namespace ConsoleApplication1
 {
+    /// <summary>
+    /// Handles collections of different sodas.
+    /// Multiple inventories of different sodas with same name is not supported and not checked.
+    /// </summary>
     class InventoryCollection //: IReadOnlyDictionary<string,Inventory> Needs .net framework 4.5
     {
         private List<Inventory> inventories;
@@ -22,5 +26,6 @@ namespace ConsoleApplication1
             inventories = inventories ?? throw new ArgumentNullException(nameof(inventories));
             this.inventories = inventories.ToList();
         }
+
     } 
 }
