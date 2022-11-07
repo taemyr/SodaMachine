@@ -78,5 +78,54 @@ namespace SodaMachineUnitTests
             result[0].Msg.Should().Be("Giving coke out");
             cola1.Amount.Should().Be(9);
         }
+
+        [TestMethod]
+        public void OnOrder_WithInsufficentCash_DisplayWarning()
+        {
+            //Arrange
+            int intialInsert = ReferenceData.Cola.Price-5;
+            sut.Insert(intialInsert);
+            //Act
+            var result = sut.Order("coke").ToArray();
+            //Assert
+            sut.Balance.Should().Be(intialInsert);
+            result.Should().HaveCount(1);
+            result[0].Should().BeOfType<DisplayWarning>();
+            result[0].Msg.Should().Be("Need 5 more");
+            cola1.Amount.Should().Be(10);
+        }
+
+        [TestMethod]
+        public void OnOrder_WithEmptyInventory_DisplayWarning()
+        {
+            //Arrange
+            int intialInsert = 100;
+            sut.Insert(intialInsert);
+            //Act
+            var result = sut.Order("sprite").ToArray();
+            //Assert
+            sut.Balance.Should().Be(intialInsert);
+            result.Should().HaveCount(1);
+            result[0].Should().BeOfType<DisplayWarning>();
+            result[0].Msg.Should().Be("No sprite left");
+            cola1.Amount.Should().Be(10);
+        }
+
+        [TestMethod]
+        public void OnOrder_WithUnknownSoda_DisplayWarning()
+        {
+            //Arrange
+            int intialInsert = 100;
+            sut.Insert(intialInsert);
+            //Act
+            var result = sut.Order("NotASoda").ToArray();
+            //Assert
+            sut.Balance.Should().Be(intialInsert);
+            result.Should().HaveCount(1);
+            result[0].Should().BeOfType<DisplayWarning>();
+            result[0].Msg.Should().Be("No such soda");
+            cola1.Amount.Should().Be(10);
+        }
+
     }
 }
