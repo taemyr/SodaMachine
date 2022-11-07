@@ -19,7 +19,7 @@ namespace ConsoleApplication1
 
         public SodaMachine(InventoryCollection inventories)
         {
-
+            this.inventories = inventories;
         }
 
         public IEnumerable<ISodaMachineAction> Insert(int amount)
