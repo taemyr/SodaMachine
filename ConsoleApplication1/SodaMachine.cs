@@ -10,7 +10,7 @@ namespace ConsoleApplication1
     {
         public int Balance { get; private set; }
 
-        InventoryCollection inventories = new InventoryCollection(new Inventory[] { new Inventory(ReferenceData.Cola,5),new Inventory(ReferenceData.Fanta,3),new Inventory(ReferenceData.Sprite,3) });
+        InventoryCollection inventories = new InventoryCollection(new Inventory(ReferenceData.Cola,5),new Inventory(ReferenceData.Fanta,3),new Inventory(ReferenceData.Sprite,3));
 
         public SodaMachine()
         {
