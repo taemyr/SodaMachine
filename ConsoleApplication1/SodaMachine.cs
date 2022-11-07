@@ -12,40 +12,52 @@ namespace ConsoleApplication1
 
         InventoryCollection inventories = new InventoryCollection(new Inventory[] { new Inventory(ReferenceData.Cola,5),new Inventory(ReferenceData.Fanta,3),new Inventory(ReferenceData.Sprite,3) });
 
+        public SodaMachine()
+        {
+
+        }
+
+        public SodaMachine(InventoryCollection inventories)
+        {
+
+        }
+
         public IEnumerable<ISodaMachineAction> Insert(int amount)
         {
             Balance += amount;
-            yield return new NoOp("Adding " + amount + " to credit");
+            return new ISodaMachineAction[] { new NoOp("Adding " + amount + " to credit") };
         }
 
         private IEnumerable<ISodaMachineAction> order(string sodaName, bool debit)
         {
+            List<ISodaMachineAction> result = new List<ISodaMachineAction>();
             var inventory = inventories[sodaName];
             if (inventory == null)
             {
-                yield return new DisplayWarning("No such soda");
-                yield break;
+                result.Add( new DisplayWarning("No such soda"));
+                return result;
             }
             if (inventory.Amount < 1)
             {
-                yield return new DisplayWarning($"No {sodaName} left");
-                yield break;
+                result.Add(new DisplayWarning($"No {sodaName} left"));
+                return result;
             }
             if (debit && inventory.Soda.Price> Balance)
             {
-                yield return new DisplayWarning($"Need {(inventory.Soda.Price - Balance)} more");
-                yield break;
+                result.Add(new DisplayWarning($"Need {(inventory.Soda.Price - Balance)} more"));
+                return result;
             }
-            yield return new EmitSoda(sodaName);
+            result.Add(new EmitSoda(sodaName));
             inventory.Amount--;
             if(debit)
             {
                 Balance -= inventory.Soda.Price;
                 foreach (var action in Recall())
                 {
-                    yield return action;
+                    result.Add( action);
                 }
             }
+            return result;
         }
 
         public IEnumerable<ISodaMachineAction> Order(string sodaName)
@@ -61,8 +73,9 @@ namespace ConsoleApplication1
 
         public IEnumerable<ISodaMachineAction> Recall()
         {
-            yield return new ReturnMoney(Balance);
+            var toReturn = Balance;
             Balance = 0;
+            return new ISodaMachineAction[] { new ReturnMoney(toReturn) };
         }
 
         /// <summary>
