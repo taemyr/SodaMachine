@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ConsoleApplication1
 {
-    class Inventory
+    public class Inventory
     {
         public Inventory(Soda soda, int amount)
         {

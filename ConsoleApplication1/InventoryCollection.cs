@@ -9,7 +9,7 @@ namespace ConsoleApplication1
     /// Handles collections of different sodas.
     /// Multiple inventories of different sodas with same name is not supported and not checked.
     /// </summary>
-    class InventoryCollection //: IReadOnlyDictionary<string,Inventory> Needs .net framework 4.5
+    public class InventoryCollection //: IReadOnlyDictionary<string,Inventory> Needs .net framework 4.5
     {
         private List<Inventory> inventories;
 
